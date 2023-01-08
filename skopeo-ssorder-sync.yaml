@@ -1,0 +1,8 @@
+registry.gitlab.com/morawskim:
+    images:
+        ssorder/docs: []
+        ssorder/ssorder: []
+        ssorder/api-web: []
+        ssorder/api: []
+        ssorder: []
+        ssorder/scheduler: []

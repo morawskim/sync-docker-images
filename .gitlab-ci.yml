@@ -1,0 +1,44 @@
+stages:
+  - sync
+
+.sync-container-images:
+  stage: sync
+  image: ubuntu:22.04
+  before_script:
+    - mkdir /etc/containers
+    - |
+      cat <<EOF > /etc/containers/policy.json
+      {
+        "default": [
+          {
+            "type": "insecureAcceptAnything"
+          }
+        ],
+        "transports":
+          {
+            "docker-daemon":
+                {
+                    "": [{"type":"insecureAcceptAnything"}]
+                }
+          }
+      }
+      EOF
+    - apt-get update -y
+    - apt-get install -y ca-certificates wget
+    - wget https://github.com/morawskim/skopeo-sync-patch/releases/download/20230108/skopeo
+    - chmod 755 ./skopeo
+
+sync-ssorder-container-images:
+  extends: .sync-container-images
+  script:
+    - ./skopeo sync --prepend-image-suffix ssorder- --src yaml --dest docker --dest-authfile $SKOPEO_AUTH_FILE skopeo-ssorder-sync.yaml docker.io/morawskim
+
+sync-webpage2kindle-container-images:
+  extends: .sync-container-images
+  script:
+    - ./skopeo sync --prepend-image-suffix webpage2kindle- --src yaml --dest docker --dest-authfile $SKOPEO_AUTH_FILE skopeo-webpage2kindle-sync.yaml docker.io/morawskim
+
+sync-container-images:
+  extends: .sync-container-images
+  script:
+    - ./skopeo sync --src yaml --dest docker --dest-authfile $SKOPEO_AUTH_FILE skopeo-sync.yaml docker.io/morawskim

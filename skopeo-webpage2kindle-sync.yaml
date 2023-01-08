@@ -1,0 +1,5 @@
+registry.gitlab.com/morawskim:
+    images:
+        webpage2kindle/symfony-app: []
+        webpage2kindle/caddy: []
+        webpage2kindle/node-microservice: []
